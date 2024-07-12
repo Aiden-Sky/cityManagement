@@ -2,25 +2,38 @@ package com.example.citymanagement.entity;
 
 public class User {
 
-    private int    userID;     //用户ID
-    private String userName;   //用户名
-    private int    userAge;    //用户年龄
+    private String account;         // 用户ID
+    private String userName;    // 用户名
+    private String passwordHash;
+    private String userType;
+    private String email;
+    private String phoneNumber;
+    private String address;
+    private int isActive;       // 是否活跃
 
-    public User() {
+    // 构造函数
+    public User(String passwordHash, String userType, int isActive) {
+        this.passwordHash = passwordHash;
+        this.userType = userType;
+        this.isActive = isActive;
     }
+    public User() {}
 
-    public User(int userID, String userName, int userAge) {
-        this.userID = userID;
+    public User(String account, String userName, String passwordHash, String userType, int isActive) {
+        this.account = account;
         this.userName = userName;
-        this.userAge = userAge;
+        this.passwordHash = passwordHash;
+        this.userType = userType;
+        this.isActive = isActive;
     }
 
-    public int getUserID() {
-        return userID;
+    // Getter和Setter方法
+    public String getaccount() {
+        return account;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setaccount(String account) {
+        this.account = account;
     }
 
     public String getUserName() {
@@ -31,20 +44,61 @@ public class User {
         this.userName = userName;
     }
 
-    public int getUserAge() {
-        return userAge;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setUserAge(int userAge) {
-        this.userAge = userAge;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public int getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(int isActive) {
+        this.isActive = isActive;
+    }
+
+    // toString方法
     @Override
     public String toString() {
         return "User{" +
-                "userID=" + userID +
+                "account=" + account +
                 ", userName='" + userName + '\'' +
-                ", userAge=" + userAge +
+                ", isActive=" + isActive +
                 '}';
     }
 }
