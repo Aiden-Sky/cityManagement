@@ -1,16 +1,18 @@
 package com.example.citymanagement.entity;
 
+import java.time.LocalDateTime;
+
 public class CaseInfom {
 
     private int caseID;
-    private String photoUrl;
+    private byte[] photo;
     private String caseType;
     private String description;
     private String location;
     private String locationDescribe;
     private String status;
-    private String createdDate;
-    private String closedDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime closedDate;
     private String reporter;
     private String reporterPhone;
     private boolean needResponse;
@@ -18,6 +20,7 @@ public class CaseInfom {
     private String handlingMethod;
     private boolean isVerified;
     private String severity;
+    private int managerID;
 
     // Getters and Setters
     public int getCaseID() {
@@ -28,12 +31,12 @@ public class CaseInfom {
         this.caseID = caseID;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public byte[] getPhoto() {
+        return photo;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
     }
 
     public String getCaseType() {
@@ -76,19 +79,19 @@ public class CaseInfom {
         this.status = status;
     }
 
-    public String getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(String createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public String getClosedDate() {
+    public LocalDateTime getClosedDate() {
         return closedDate;
     }
 
-    public void setClosedDate(String closedDate) {
+    public void setClosedDate(LocalDateTime closedDate) {
         this.closedDate = closedDate;
     }
 
@@ -146,5 +149,13 @@ public class CaseInfom {
 
     public void setSeverity(String severity) {
         this.severity = severity;
+    }
+
+    public int getManagerID() {
+        return managerID;
+    }
+
+    public void setManagerID(int manager) {
+        this.managerID = manager;
     }
 }

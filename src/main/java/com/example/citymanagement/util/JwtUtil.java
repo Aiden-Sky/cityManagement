@@ -10,9 +10,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private String secret = "Keyset"; // 秘钥，应该保密
 
-    public String generateToken(String username) {
+    public String generateToken(String username,String secret) {
         long now = System.currentTimeMillis();
         return Jwts.builder()
                 .setSubject(username)
@@ -22,7 +21,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token,String secret) {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
@@ -31,7 +30,7 @@ public class JwtUtil {
         }
     }
 
-    public String getUsernameFromToken(String token) {
+    public String getUsernameFromToken(String token,String secret) {
         Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         return claims.getSubject();
     }

@@ -12,6 +12,6 @@
     <select id="login" parameterType="String" resultType="com.example.citymanagement.entity.User">
         SELECT *
         FROM userinfo
-        WHERE Account = #{account}
+        WHERE Account = #{account} or PhoneNumber = #{account} or Email = #{account}
     </select>
 </mapper>

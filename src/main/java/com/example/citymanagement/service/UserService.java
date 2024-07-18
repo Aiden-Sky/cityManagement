@@ -46,15 +46,23 @@ public class UserService {
                 return null;
             }
 
-            if (!"SystemAdmin".equals(checkUser.getUserType())) {
+            String hashedPassword = hashPassword(password);
+            if (!checkUser.getPasswordHash().equals(hashedPassword)) {
                 return null;
             }
 
-            String hashedPassword = hashPassword(password);
-            if (checkUser.getPasswordHash().equals(hashedPassword)) {
-                return jwtUtil.generateToken(account);
+
+            switch (checkUser.getUserType()) {
+                case "SystemAdmin":
+                    return jwtUtil.generateToken(account,"SystemAdmin");
+                case "Resident":
+                    return jwtUtil.generateToken(account,"Resident");
+                case "Management":
+                    return jwtUtil.generateToken(account,"Management");
+                default:
+                    return null;
             }
-            return null;
+
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -77,4 +85,9 @@ public class UserService {
         return hexString.toString();
     }
 
+    public boolean checkManage(String account) {
+        User user = userMapper.login(account);
+        if ((user.getUserType()).equals("Management")) {return true;}
+        return false;
+    }
 }

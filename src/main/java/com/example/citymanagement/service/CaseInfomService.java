@@ -16,7 +16,31 @@ public class CaseInfomService {
     private JwtUtil jwtUtil;
 
 
-    public List<CaseInfom> getAllInfoms() {
+    public List<CaseInfom> getReports(int page, int pageSize) {
+        // 计算偏移量
+        int offset = (page - 1) * pageSize;
+        // 调用 DAO 层查询事件信息报告列表
+        List<CaseInfom> caseInfoms = caseInfomMapper.getReports(offset, pageSize);
+        return caseInfoms;
+    }
+
+    public int getTotalPages(int pageSize) {
+        // 调用 DAO 层获取总报告数
+        int totalCase = caseInfomMapper.getTotalCase();
+        return (int) Math.ceil((double) totalCase / pageSize);
+    }
+
+    public boolean SetReports(CaseInfom caseinfom) {
+        if (caseinfom.getCaseID()==0){
+            int res = caseInfomMapper.insertCaseInfom(caseinfom);
+            if (res > 0){return true;}
+            return false;
+        }
+        else {
+            int res = caseInfomMapper.updateCaseInfom(caseinfom);
+            if (res > 0){return true;}
+            return false;
+        }
 
     }
 }

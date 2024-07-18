@@ -6,9 +6,11 @@ import java.util.List;
 
 public interface CaseInfomMapper {
 
-    CaseInfom selectCaseInfomById(int id);
+    List<CaseInfom> getReports(int offset, int pageSize);
 
     List<CaseInfom> selectAllCaseInfom();
+
+    int getTotalCase();
 
     int insertCaseInfom(CaseInfom caseInfom);
 
