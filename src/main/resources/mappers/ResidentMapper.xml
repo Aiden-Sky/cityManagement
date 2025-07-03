@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.citymanagement.Dao.ResidentMapper">
+    
+    <select id="getResidentByAccount" parameterType="String" resultType="com.example.citymanagement.entity.Resident">
+        SELECT r.*, u.PasswordHash, u.UserType, u.Email, u.PhoneNumber, u.IsActive 
+        FROM residentinfo r
+        JOIN userinfo u ON r.account = u.Account
+        WHERE r.account = #{account}
+    </select>
+    
+    <select id="getAllResidents" resultType="com.example.citymanagement.entity.Resident">
+        SELECT r.*, u.PasswordHash, u.UserType, u.Email, u.PhoneNumber, u.IsActive
+        FROM residentinfo r
+        JOIN userinfo u ON r.account = u.Account
+    </select>
+    
+    <select id="getResidentById" parameterType="Long" resultType="com.example.citymanagement.entity.Resident">
+        SELECT r.*, u.PasswordHash, u.UserType, u.Email, u.PhoneNumber, u.IsActive
+        FROM residentinfo r
+        JOIN userinfo u ON r.account = u.Account
+        WHERE r.residentId = #{residentId}
+    </select>
+    
+    <insert id="insertResident" parameterType="com.example.citymanagement.entity.Resident">
+        INSERT INTO residentinfo (
+            account, name, sex, dateOfBirthday, address, idNumber
+        )
+        VALUES (
+            #{account}, #{name}, #{sex}, #{dateOfBirthday}, #{address}, #{idNumber}
+        )
+    </insert>
+    
+    <update id="updateResident" parameterType="com.example.citymanagement.entity.Resident">
+        UPDATE residentinfo
+        SET 
+            name = #{name},
+            sex = #{sex},
+            dateOfBirthday = #{dateOfBirthday},
+            address = #{address},
+            idNumber = #{idNumber}
+        WHERE account = #{account}
+    </update>
+    
+    <delete id="deleteResident" parameterType="String">
+        DELETE FROM residentinfo
+        WHERE account = #{account}
+    </delete>
+</mapper> 

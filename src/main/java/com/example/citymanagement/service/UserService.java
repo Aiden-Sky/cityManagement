@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
 @Service
 public class UserService {
 
@@ -18,18 +17,32 @@ public class UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public boolean addUserInfo(String account, String name, int age) {
-        User user = new User();
-        user.setaccount(account);
-        user.setUserName(name);
-        int res = userMapper.insertUserInfo(user);
-        if (res > 0) return true;  //上传成功
-        else return false;   //上传失败
+    public boolean setUser(User user) {
+        try {
+            // 如果用户提供了密码，则对密码进行哈希处理
+            if (user.getPasswordHash() != null && !user.getPasswordHash().isEmpty()) {
+                user.setPasswordHash(hashPassword(user.getPasswordHash()));
+            }
+
+            // 根据用户的账户信息决定插入或更新
+            User existingUser = userMapper.login(user.getaccount());
+            int res;
+            if (existingUser == null) {
+                // 如果用户不存在，插入新用户
+                res = userMapper.insertUser(user);
+            } else {
+                // 如果用户存在，更新现有用户
+                res = userMapper.updateUser(user);
+            }
+            return res > 0; // 如果操作成功，则返回true，否则返回false
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean Search(String ID, String name, int age) {
-        //Todo
-
+        // Todo
 
         return false;
     }
@@ -51,26 +64,15 @@ public class UserService {
                 return null;
             }
 
-
-            switch (checkUser.getUserType()) {
-                case "SystemAdmin":
-                    return jwtUtil.generateToken(account,"SystemAdmin");
-                case "Resident":
-                    return jwtUtil.generateToken(account,"Resident");
-                case "Management":
-                    return jwtUtil.generateToken(account,"Management");
-                default:
-                    return null;
-            }
-
-
+            // 使用更新后的JwtUtil生成token
+            return jwtUtil.generateToken(account, checkUser.getUserType());
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    //哈希函数
+    // 哈希函数
     private String hashPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hash = md.digest(password.getBytes());
@@ -78,7 +80,8 @@ public class UserService {
 
         for (byte b : hash) {
             String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) hexString.append('0');
+            if (hex.length() == 1)
+                hexString.append('0');
             hexString.append(hex);
         }
 
@@ -87,7 +90,6 @@ public class UserService {
 
     public boolean checkManage(String account) {
         User user = userMapper.login(account);
-        if ((user.getUserType()).equals("Management")) {return true;}
-        return false;
+        return user != null && "Management".equals(user.getUserType());
     }
 }

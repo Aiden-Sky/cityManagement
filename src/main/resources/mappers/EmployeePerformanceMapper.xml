@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.citymanagement.Dao.EmployeePerformanceMapper">
+    
+    <select id="findAll" resultType="com.example.citymanagement.entity.EmployeePerformance">
+        SELECT *
+        FROM employeeperformance
+    </select>
+    
+    <select id="findById" parameterType="int" resultType="com.example.citymanagement.entity.EmployeePerformance">
+        SELECT *
+        FROM employeeperformance
+        WHERE manageID = #{id}
+    </select>
+    
+    <insert id="insert" parameterType="com.example.citymanagement.entity.EmployeePerformance">
+        INSERT INTO employeeperformance (
+            manageID, name, department, position, 
+            completedCases, qualityScore, evaluationScore, 
+            evaluationDate, comments, reportDate
+        )
+        VALUES (
+            #{manageID}, #{name}, #{department}, #{position}, 
+            #{completedCases}, #{qualityScore}, #{evaluationScore}, 
+            #{evaluationDate}, #{comments}, #{reportDate}
+        )
+    </insert>
+    
+    <update id="update" parameterType="com.example.citymanagement.entity.EmployeePerformance">
+        UPDATE employeeperformance
+        SET 
+            name = #{name},
+            department = #{department},
+            position = #{position},
+            completedCases = #{completedCases},
+            qualityScore = #{qualityScore},
+            evaluationScore = #{evaluationScore},
+            evaluationDate = #{evaluationDate},
+            comments = #{comments},
+            reportDate = #{reportDate}
+        WHERE manageID = #{manageID}
+    </update>
+    
+    <delete id="delete" parameterType="int">
+        DELETE FROM employeeperformance
+        WHERE manageID = #{id}
+    </delete>
+</mapper> 

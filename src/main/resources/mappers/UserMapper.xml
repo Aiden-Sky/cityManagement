@@ -3,15 +3,32 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.citymanagement.Dao.UserMapper">
-    <insert id="insertUserInfo" parameterType="com.example.citymanagement.entity.User">
-        INSERT INTO user (userID, userName, userAge)
-        VALUES (#{userID,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR},
-                #{userAge,jdbcType=INTEGER})
+   <insert id="insertUser" parameterType="com.example.citymanagement.entity.User">
+        INSERT INTO userinfo (Account, PasswordHash, UserType, Email, PhoneNumber, IsActive)
+        VALUES (#{account,jdbcType=VARCHAR}, #{passwordHash,jdbcType=VARCHAR},
+                #{userType,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR},
+                #{isActive,jdbcType=INTEGER})
     </insert>
 
     <select id="login" parameterType="String" resultType="com.example.citymanagement.entity.User">
         SELECT *
         FROM userinfo
-        WHERE Account = #{account} or PhoneNumber = #{account} or Email = #{account}
+        WHERE Account = #{account} OR PhoneNumber = #{account} OR Email = #{account}
     </select>
+
+    <update id="updateUser" parameterType="com.example.citymanagement.entity.User">
+        UPDATE userinfo
+        SET Account = #{userName,jdbcType=VARCHAR},
+            PasswordHash = #{passwordHash,jdbcType=VARCHAR},
+            UserType = #{userType,jdbcType=VARCHAR},
+            Email = #{email,jdbcType=VARCHAR},
+            PhoneNumber = #{phoneNumber,jdbcType=VARCHAR},
+            IsActive = #{isActive,jdbcType=INTEGER}
+        WHERE Account = #{account,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteUser" parameterType="String">
+        DELETE FROM userinfo
+        WHERE Account = #{account,jdbcType=VARCHAR}
+    </delete>
 </mapper>

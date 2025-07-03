@@ -1,5 +1,6 @@
 package com.example.citymanagement.controller;
 
+import com.example.citymanagement.entity.User;
 import com.example.citymanagement.service.UserService;
 import com.example.citymanagement.util.JwtUtil;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,31 +30,36 @@ public class UserController {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // 上传用户信息
-    @GetMapping("/AddUserInfo")
+    @PostMapping("/setUserInfo")
     @ResponseBody
-    public boolean addUserInfo(@RequestParam("userID") String account,
-                               @RequestParam("userName") String userName,
-                               @RequestParam("userAge") int userAge) {
-        boolean res = userService.addUserInfo(account, userName, userAge);
-        return res;
+    public ResponseEntity<String> addUserInfo(@RequestBody User user) {
+        if (userService.setUser(user)) {
+            return ResponseEntity.ok("用户信息设置成功");
+        } else {
+            return ResponseEntity.status(500).body("用户信息设置失败");
+        }
     }
 
     // 处理登录
     @PostMapping("/login")
     @ResponseBody
-
     public ResponseEntity<Object> login(@RequestParam String account, @RequestParam String password) {
         // 处理登录逻辑
         // 例如：验证用户名和密码，生成JWT token等
         String token = userService.authenticate(account, password);
         if (token != null) {
-            if (userService.checkManage(account)){
-                 Map<String, Object> response = new HashMap<>();
+            // 检查用户是否是管理人员
+            if (userService.checkManage(account)) {
+                Map<String, Object> response = new HashMap<>();
                 response.put("token", token);
                 response.put("isManage", true);
                 return ResponseEntity.ok(response);
             }
-            return ResponseEntity.ok(token);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("isManage", false);
+            return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(401).body("账户或密码不正确");
         }
@@ -62,42 +68,30 @@ public class UserController {
     @PostMapping("/verifyToken")
     @ResponseBody
     public ResponseEntity<String> verifyToken(@RequestBody String body) {
-        //提取token
+        // 提取token
         try {
             JsonNode rootNode = objectMapper.readTree(body);
             String token = rootNode.path("token").asText();
             String type = rootNode.path("type").asText();
 
-            boolean tokenVarited = false;
-            switch (type) {
-                case "user":
-                    tokenVarited = jwtUtil.validateToken(token, "Resident");
-                    break;
-                case "admin":
-                    tokenVarited = jwtUtil.validateToken(token, "SystemAdmin");
-                    break;
-                case "manage":
-                    tokenVarited = jwtUtil.validateToken(token, "Management");
-                    break;
-                default:
-                    tokenVarited = false;
-            }
+            boolean tokenValid = false;
+            // 使用新的JwtUtil验证方法，不再需要传入不同的密钥
+            tokenValid = jwtUtil.validateToken(token, type);
 
-
-            if (tokenVarited != false) {
+            if (tokenValid) {
                 return ResponseEntity.ok("验证成功");
             } else {
                 return ResponseEntity.status(401).body("无效token，已过期或失效");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.status(500).body("token验证过程中发生错误");
         }
-        return null;
     }
-
 
     @Autowired
     private DefaultKaptcha defaultKaptcha;
+
     @GetMapping("/getcapchar")
     public void getCaptchaImage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // 生成验证码文本并保存到 session 中
@@ -118,13 +112,13 @@ public class UserController {
     }
 
     @PostMapping("/verifycapcha")
-    public String verifyCaptcha(@RequestParam("captcha") String captcha, HttpServletRequest request) {
+    @ResponseBody
+    public ResponseEntity<String> verifyCaptcha(@RequestParam("captcha") String captcha, HttpServletRequest request) {
         String sessionCaptcha = (String) request.getSession().getAttribute("captcha");
         if (sessionCaptcha != null && sessionCaptcha.equalsIgnoreCase(captcha)) {
-            return "验证码正确";
+            return ResponseEntity.ok("验证码正确");
         } else {
-            return "验证码错误";
+            return ResponseEntity.status(400).body("验证码错误");
         }
     }
-
 }

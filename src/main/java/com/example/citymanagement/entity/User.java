@@ -3,28 +3,12 @@ package com.example.citymanagement.entity;
 public class User {
 
     private String account;         // 用户ID
-    private String userName;    // 用户名
     private String passwordHash;
     private String userType;
     private String email;
     private String phoneNumber;
     private int isActive;       // 是否活跃
 
-    // 构造函数
-    public User(String passwordHash, String userType, int isActive) {
-        this.passwordHash = passwordHash;
-        this.userType = userType;
-        this.isActive = isActive;
-    }
-    public User() {}
-
-    public User(String account, String userName, String passwordHash, String userType, int isActive) {
-        this.account = account;
-        this.userName = userName;
-        this.passwordHash = passwordHash;
-        this.userType = userType;
-        this.isActive = isActive;
-    }
 
     // Getter和Setter方法
     public String getaccount() {
@@ -35,13 +19,7 @@ public class User {
         this.account = account;
     }
 
-    public String getUserName() {
-        return userName;
-    }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public String getPasswordHash() {
         return passwordHash;
@@ -84,12 +62,5 @@ public class User {
     }
 
     // toString方法
-    @Override
-    public String toString() {
-        return "User{" +
-                "account=" + account +
-                ", userName='" + userName + '\'' +
-                ", isActive=" + isActive +
-                '}';
-    }
+
 }

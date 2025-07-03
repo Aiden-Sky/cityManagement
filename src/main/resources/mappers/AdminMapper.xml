@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.citymanagement.Dao.AdminMapper">
+    
+    <select id="getAdminByAccount" parameterType="String" resultType="com.example.citymanagement.entity.Admin">
+        SELECT a.*, u.PasswordHash, u.UserType, u.Email, u.PhoneNumber, u.IsActive
+        FROM admininfo a
+        JOIN userinfo u ON a.account = u.Account
+        WHERE a.account = #{account}
+    </select>
+    
+    <select id="getAllAdmins" resultType="com.example.citymanagement.entity.Admin">
+        SELECT a.*, u.PasswordHash, u.UserType, u.Email, u.PhoneNumber, u.IsActive
+        FROM admininfo a
+        JOIN userinfo u ON a.account = u.Account
+    </select>
+    
+    <select id="getAdminById" parameterType="int" resultType="com.example.citymanagement.entity.Admin">
+        SELECT a.*, u.PasswordHash, u.UserType, u.Email, u.PhoneNumber, u.IsActive
+        FROM admininfo a
+        JOIN userinfo u ON a.account = u.Account
+        WHERE a.adminID = #{adminId}
+    </select>
+    
+    <insert id="insertAdmin" parameterType="com.example.citymanagement.entity.Admin">
+        INSERT INTO admininfo (
+            account, name, sex, position, remark
+        )
+        VALUES (
+            #{account}, #{name}, #{sex}, #{position}, #{remark}
+        )
+    </insert>
+    
+    <update id="updateAdmin" parameterType="com.example.citymanagement.entity.Admin">
+        UPDATE admininfo
+        SET 
+            name = #{name},
+            sex = #{sex},
+            position = #{position},
+            remark = #{remark}
+        WHERE account = #{account}
+    </update>
+    
+    <delete id="deleteAdmin" parameterType="String">
+        DELETE FROM admininfo
+        WHERE account = #{account}
+    </delete>
+</mapper> 

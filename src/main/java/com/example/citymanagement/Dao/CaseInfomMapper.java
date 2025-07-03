@@ -16,6 +16,5 @@ public interface CaseInfomMapper {
 
     int updateCaseInfom(CaseInfom caseInfom);
 
-    int deleteCaseInfomById(int id);
-
+    int deleteCaseById(int caseId);
 }

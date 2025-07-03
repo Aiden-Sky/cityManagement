@@ -2,6 +2,7 @@ package com.example.citymanagement.service;
 
 import com.example.citymanagement.Dao.CaseInfomMapper;
 import com.example.citymanagement.entity.CaseInfom;
+import com.example.citymanagement.entity.Manager;
 import com.example.citymanagement.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,4 +44,12 @@ public class CaseInfomService {
         }
 
     }
+
+    public boolean deleteCaseById(int caseId) {
+        int result = caseInfomMapper.deleteCaseById(caseId);
+        return result > 0; // 如果删除成功，返回true
+    }
+
+
+
 }

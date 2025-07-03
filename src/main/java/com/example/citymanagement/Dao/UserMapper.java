@@ -5,7 +5,11 @@ import com.example.citymanagement.entity.User;
 
 public interface UserMapper {
 
-    int insertUserInfo(User user);
-
     User login(String account);
+
+    int insertUser(User user);
+
+    int updateUser(User user);
+
+    int deleteUser(String account);
 }
