@@ -3,7 +3,7 @@ package com.example.citymanagement.entity;
 import java.util.Date;
 
 public class Resident {
-        private Long residentId;       // 对应 ResidentID
+    private Long residentId;       // 对应 ResidentID
     private String account;        // 对应 Account
     private String name;           // 对应 Name
     private Boolean sex;           // 对应 Sex (bit(1) -> Boolean)

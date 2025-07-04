@@ -14,7 +14,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // 使用固定的安全密钥（在实际生产环境中，应该从配置文件中读取）
+    // 使用固定的安全密钥
     private final String SECRET_KEY = "CityManagementSecretKey_MustBe_AtLeast256bits_Long_ForSecurity";
     private final long EXPIRATION_TIME = 10 * 60 * 60 * 1000; // 10小时
 

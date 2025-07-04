@@ -41,6 +41,16 @@ public class UserService {
         }
     }
 
+    // 根据账号获取用户信息
+    public User getUserByAccount(String account) {
+        try {
+            return userMapper.login(account);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public boolean Search(String ID, String name, int age) {
         // Todo
 
@@ -64,7 +74,7 @@ public class UserService {
                 return null;
             }
 
-            // 使用更新后的JwtUtil生成token
+            // 根据用户类型生成token
             return jwtUtil.generateToken(account, checkUser.getUserType());
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -90,6 +100,9 @@ public class UserService {
 
     public boolean checkManage(String account) {
         User user = userMapper.login(account);
-        return user != null && "Management".equals(user.getUserType());
+        if (user != null && "Management".equals(user.getUserType())) {
+            return true;
+        }
+        return false;
     }
 }

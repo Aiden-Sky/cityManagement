@@ -2,6 +2,7 @@ package com.example.citymanagement.service;
 
 import com.example.citymanagement.Dao.ResidentMapper;
 import com.example.citymanagement.Dao.UserMapper;
+import com.example.citymanagement.Dto.ResidentRegisterDTO;
 import com.example.citymanagement.entity.Resident;
 import com.example.citymanagement.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,27 +38,37 @@ public class ResidentService {
 
     // 添加新居民（同时添加用户信息和居民信息）
     @Transactional
-    public boolean addResident(Resident resident) {
+    public boolean registResident(ResidentRegisterDTO residentRegisterDTO) {
         try {
             // 创建用户信息
             User user = new User();
-            user.setaccount(resident.getAccount());
-            user.setPasswordHash(hashPassword(resident.getPasswordHash()));
+            user.setaccount(residentRegisterDTO.getAccount());
+            user.setPasswordHash(hashPassword(residentRegisterDTO.getPassword()));
             user.setUserType("Resident");
-            user.setEmail(resident.getEmail());
-            user.setPhoneNumber(resident.getPhoneNumber());
+            user.setEmail(residentRegisterDTO.getEmail());
+            user.setPhoneNumber(residentRegisterDTO.getPhoneNumber());
             user.setIsActive(1);
 
             // 插入用户信息
             int userInsert = userMapper.insertUser(user);
 
+            // 创建居民信息
+            Resident resident = new Resident();
+            resident.setAccount(residentRegisterDTO.getAccount());
+            resident.setIdNumber(residentRegisterDTO.getIdNumber());
+            resident.setEmail(residentRegisterDTO.getEmail());
+            resident.setPhoneNumber(residentRegisterDTO.getPhoneNumber());
+            resident.setIsActive("1");
+
             // 插入居民信息
             int residentInsert = residentMapper.insertResident(resident);
 
             return userInsert > 0 && residentInsert > 0;
-        } catch (Exception e) {
+
+
+        }catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("添加居民失败", e);
+            return false;
         }
     }
 

@@ -1,7 +1,10 @@
 package com.example.citymanagement.controller;
 
+import com.example.citymanagement.Dto.ResidentRegisterDTO;
 import com.example.citymanagement.entity.Resident;
+import com.example.citymanagement.entity.User;
 import com.example.citymanagement.service.ResidentService;
+import com.example.citymanagement.service.UserService;
 import com.example.citymanagement.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -18,6 +23,8 @@ public class ResidentController {
 
     @Autowired
     private ResidentService residentService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -82,26 +89,26 @@ public class ResidentController {
     }
 
     // 管理员添加新居民
-    @PostMapping("/add")
-    @ResponseBody
-    public ResponseEntity<String> addResident(@RequestBody Resident resident,
-            @RequestHeader("Authorization") String token) {
-        // 验证管理员权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
-        }
-
-        try {
-            if (residentService.addResident(resident)) {
-                return ResponseEntity.ok("居民添加成功");
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("居民添加失败");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("居民添加失败：" + e.getMessage());
-        }
-    }
+//    @PostMapping("/add")
+//    @ResponseBody
+//    public ResponseEntity<String> addResident(@RequestBody Resident resident,
+//            @RequestHeader("Authorization") String token) {
+//        // 验证管理员权限
+//        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
+//        }
+//
+//        try {
+//            if (residentService.registResident(resident)) {
+//                return ResponseEntity.ok("居民添加成功");
+//            } else {
+//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("居民添加失败");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("居民添加失败：" + e.getMessage());
+//        }
+//    }
 
     // 更新居民信息
     @PutMapping("/update")
@@ -147,4 +154,33 @@ public class ResidentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("居民删除失败");
         }
     }
+
+    // 居民注册
+    @PostMapping("/register")
+    @ResponseBody
+    public ResponseEntity<Object> registerResident(@RequestBody ResidentRegisterDTO residentRegisterDTO) {
+        try {
+            // 检查账号是否已存在
+            User existingUser = userService.getUserByAccount(residentRegisterDTO.getAccount());
+            if (existingUser != null) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("账号已存在");
+            }
+
+            // 添加居民信息
+            boolean success = residentService.registResident(residentRegisterDTO);
+
+            if (success) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "注册成功");
+                response.put("account", residentRegisterDTO.getAccount());
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("注册失败，请稍后重试");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("注册失败：" + e.getMessage());
+        }
+    }
+
 }

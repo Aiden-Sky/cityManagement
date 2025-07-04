@@ -1,7 +1,9 @@
 package com.example.citymanagement.controller;
 
 import com.example.citymanagement.entity.Admin;
+import com.example.citymanagement.entity.User;
 import com.example.citymanagement.service.AdminService;
+import com.example.citymanagement.service.UserService;
 import com.example.citymanagement.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,14 +24,37 @@ public class AdminController {
     private AdminService adminService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private JwtUtil jwtUtil;
+
+    // 管理员登录 - 修改为直接返回token字符串
+    @PostMapping("/login")
+    @ResponseBody
+    public String adminLogin(@RequestParam String account, @RequestParam String password) {
+        // 处理登录逻辑
+        String token = userService.authenticate(account, password);
+        if (token != null) {
+            // 验证是否是管理员
+            User user = userService.getUserByAccount(account);
+            if (user != null && "SystemAdmin".equals(user.getUserType())) {
+                // 直接返回token字符串，符合前端期望
+                return token;
+            } else {
+                throw new RuntimeException("该账号不是管理员账号");
+            }
+        } else {
+            throw new RuntimeException("账号或密码不正确");
+        }
+    }
 
     // 获取所有管理员
     @GetMapping("/all")
     @ResponseBody
     public ResponseEntity<List<Admin>> getAllAdmins(@RequestHeader("Authorization") String token) {
         // 验证超级管理员权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+        if (!validateAdminToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
@@ -40,7 +66,7 @@ public class AdminController {
     @ResponseBody
     public ResponseEntity<Admin> getAdminById(@PathVariable int id, @RequestHeader("Authorization") String token) {
         // 验证超级管理员权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+        if (!validateAdminToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
@@ -58,7 +84,7 @@ public class AdminController {
     public ResponseEntity<Admin> getAdminInfo(@RequestHeader("Authorization") String token) {
         try {
             // 验证超级管理员权限
-            if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+            if (!validateAdminToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
             }
 
@@ -82,7 +108,7 @@ public class AdminController {
     @ResponseBody
     public ResponseEntity<String> addAdmin(@RequestBody Admin admin, @RequestHeader("Authorization") String token) {
         // 验证超级管理员权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+        if (!validateAdminToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
         }
 
@@ -103,7 +129,7 @@ public class AdminController {
     @ResponseBody
     public ResponseEntity<String> updateAdmin(@RequestBody Admin admin, @RequestHeader("Authorization") String token) {
         // 验证超级管理员权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+        if (!validateAdminToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
         }
 
@@ -120,7 +146,7 @@ public class AdminController {
     public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request,
             @RequestHeader("Authorization") String token) {
         // 验证超级管理员权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+        if (!validateAdminToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
         }
 
@@ -144,7 +170,7 @@ public class AdminController {
     public ResponseEntity<String> deleteAdmin(@PathVariable String account,
             @RequestHeader("Authorization") String token) {
         // 验证超级管理员权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+        if (!validateAdminToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
         }
 
@@ -159,5 +185,17 @@ public class AdminController {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("管理员删除失败");
         }
+    }
+
+    // 辅助方法：验证是否是管理员token
+    private boolean validateAdminToken(String token) {
+        return jwtUtil.validateToken(token, "SystemAdmin");
+    }
+
+    // 处理异常
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 }

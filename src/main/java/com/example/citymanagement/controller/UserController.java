@@ -1,6 +1,8 @@
 package com.example.citymanagement.controller;
 
+import com.example.citymanagement.entity.Resident;
 import com.example.citymanagement.entity.User;
+import com.example.citymanagement.service.ResidentService;
 import com.example.citymanagement.service.UserService;
 import com.example.citymanagement.util.JwtUtil;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import javax.imageio.ImageIO;
@@ -25,8 +28,13 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ResidentService residentService;
+
     @Autowired
     private JwtUtil jwtUtil;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // 上传用户信息
@@ -49,20 +57,45 @@ public class UserController {
         String token = userService.authenticate(account, password);
         if (token != null) {
             // 检查用户是否是管理人员
-            if (userService.checkManage(account)) {
+            User user = userService.getUserByAccount(account);
+            if (user != null) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("token", token);
-                response.put("isManage", true);
+                response.put("userType", user.getUserType());
+
+                if ("Management".equals(user.getUserType())) {
+                    response.put("isManage", true);
+                } else {
+                    response.put("isManage", false);
+                }
+
                 return ResponseEntity.ok(response);
             }
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", token);
-            response.put("isManage", false);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("获取用户信息失败");
         } else {
             return ResponseEntity.status(401).body("账户或密码不正确");
         }
+    }
+
+
+
+    // 检查账号是否可用
+    @GetMapping("/check-account")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> checkAccountAvailable(@RequestParam String account) {
+        Map<String, Object> response = new HashMap<>();
+
+        User user = userService.getUserByAccount(account);
+        if (user != null) {
+            response.put("available", false);
+            response.put("message", "该账号已被注册");
+        } else {
+            response.put("available", true);
+            response.put("message", "账号可用");
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/verifyToken")
