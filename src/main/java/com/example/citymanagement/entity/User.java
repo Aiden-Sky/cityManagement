@@ -7,7 +7,7 @@ public class User {
     private String userType;
     private String email;
     private String phoneNumber;
-    private int isActive;       // 是否活跃
+    private int isActive;       // 是否启用
 
 
     // Getter和Setter方法

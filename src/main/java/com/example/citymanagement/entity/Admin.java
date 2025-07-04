@@ -3,13 +3,13 @@ package com.example.citymanagement.entity;
 public class Admin {
     private int adminID; // 主键
 
-    private String account; // 账户，允许为空
+    private String account; // 账户
 
-    private String name; // 姓名，不允许为空
+    private String name; // 姓名
 
-    private boolean sex; // 性别，使用布尔值表示（true=男，false=女）
+    private boolean sex; // 性别
 
-    private String position; // 职位，不允许为空
+    private String position; // 职位，
 
     private String remark; // 备注，允许为空
 
