@@ -18,12 +18,18 @@
 
     <update id="updateUser" parameterType="com.example.citymanagement.entity.User">
         UPDATE userinfo
-        SET Account = #{userName,jdbcType=VARCHAR},
-            PasswordHash = #{passwordHash,jdbcType=VARCHAR},
-            UserType = #{userType,jdbcType=VARCHAR},
+        SET Account = #{account},
+            <if test="passwordHash != null">
+                PasswordHash = #{passwordHash,jdbcType=VARCHAR},
+            </if>
+            <if test="userType != null">
+                UserType = #{userType,jdbcType=VARCHAR},
+            </if>
             Email = #{email,jdbcType=VARCHAR},
             PhoneNumber = #{phoneNumber,jdbcType=VARCHAR},
-            IsActive = #{isActive,jdbcType=INTEGER}
+            <if test="isActive!= null">
+                IsActive = #{isActive,jdbcType=INTEGER}
+            </if>
         WHERE Account = #{account,jdbcType=VARCHAR}
     </update>
 
