@@ -59,17 +59,8 @@ public class UserController {
             // 检查用户是否是管理人员
             User user = userService.getUserByAccount(account);
             if (user != null) {
-                Map<String, Object> response = new HashMap<>();
-                response.put("token", token);
-                response.put("userType", user.getUserType());
 
-                if ("Management".equals(user.getUserType())) {
-                    response.put("isManage", true);
-                } else {
-                    response.put("isManage", false);
-                }
-
-                return ResponseEntity.ok(response);
+                return ResponseEntity.ok(token);
             }
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("获取用户信息失败");
