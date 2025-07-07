@@ -16,7 +16,6 @@ public class CaseInfomService {
     @Autowired
     private JwtUtil jwtUtil;
 
-
     public List<CaseInfom> getReports(int page, int pageSize) {
         // 计算偏移量
         int offset = (page - 1) * pageSize;
@@ -32,14 +31,17 @@ public class CaseInfomService {
     }
 
     public boolean SetReports(CaseInfom caseinfom) {
-        if (caseinfom.getCaseID()==0){
+        if (caseinfom.getCaseID() == 0) {
             int res = caseInfomMapper.insertCaseInfom(caseinfom);
-            if (res > 0){return true;}
+            if (res > 0) {
+                return true;
+            }
             return false;
-        }
-        else {
+        } else {
             int res = caseInfomMapper.updateCaseInfom(caseinfom);
-            if (res > 0){return true;}
+            if (res > 0) {
+                return true;
+            }
             return false;
         }
 
@@ -50,6 +52,26 @@ public class CaseInfomService {
         return result > 0; // 如果删除成功，返回true
     }
 
+    /**
+     * 根据用户名查询该用户上报的案件
+     * 
+     * @param username 用户名
+     * @param page     页码
+     * @param pageSize 每页大小
+     * @return 案件列表
+     */
+    public List<CaseInfom> getReportsByUsername(String username, int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return caseInfomMapper.getReportsByReporter(username, offset, pageSize);
+    }
 
-
+    /**
+     * 根据案件ID获取案件详情
+     * 
+     * @param caseId 案件ID
+     * @return 案件详情
+     */
+    public CaseInfom getCaseById(int caseId) {
+        return caseInfomMapper.getCaseById(caseId);
+    }
 }

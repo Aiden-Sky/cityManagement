@@ -26,9 +26,43 @@
         FROM caseinformation
     </select>
 
-        <delete id="deleteCaseById" parameterType="int">
+    <delete id="deleteCaseById" parameterType="int">
         DELETE
         FROM caseinformation
         WHERE CaseID = #{caseId}
     </delete>
+    
+    <select id="getReportsByReporter" resultType="com.example.citymanagement.entity.CaseInfom">
+        SELECT *
+        FROM caseinformation
+        WHERE reporter = #{reporter}
+        ORDER BY createdDate DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    
+    <select id="getCaseById" parameterType="int" resultType="com.example.citymanagement.entity.CaseInfom">
+        SELECT *
+        FROM caseinformation
+        WHERE caseID = #{caseId}
+    </select>
+    
+    <update id="updateCaseInfom" parameterType="com.example.citymanagement.entity.CaseInfom">
+        UPDATE caseinformation
+        SET 
+            photo = #{photo},
+            caseType = #{caseType},
+            description = #{description},
+            location = #{location},
+            locationDescribe = #{locationDescribe},
+            status = #{status},
+            closedDate = #{closedDate},
+            reporterPhone = #{reporterPhone},
+            needResponse = #{needResponse},
+            infoCategory = #{infoCategory},
+            handlingMethod = #{handlingMethod},
+            isVerified = #{isVerified},
+            severity = #{severity},
+            managerID = #{managerID}
+        WHERE caseID = #{caseID}
+    </update>
 </mapper>

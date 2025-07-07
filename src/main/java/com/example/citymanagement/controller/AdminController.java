@@ -38,7 +38,7 @@ public class AdminController {
         if (token != null) {
             // 验证是否是管理员
             User user = userService.getUserByAccount(account);
-            if (user != null && "SystemAdmin".equals(user.getUserType())) {
+            if (user != null && "SysAdmin".equals(user.getUserType())) {
                 // 直接返回token字符串，符合前端期望
                 return token;
             } else {
