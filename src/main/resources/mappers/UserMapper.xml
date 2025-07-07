@@ -15,6 +15,12 @@
         FROM userinfo
         WHERE Account = #{account} OR PhoneNumber = #{account} OR Email = #{account}
     </select>
+    
+    <select id="getUserByAccount" parameterType="String" resultType="com.example.citymanagement.entity.User">
+        SELECT *
+        FROM userinfo
+        WHERE Account = #{account}
+    </select>
 
     <update id="updateUser" parameterType="com.example.citymanagement.entity.User">
         UPDATE userinfo
@@ -28,6 +34,24 @@
             Email = #{email,jdbcType=VARCHAR},
             PhoneNumber = #{phoneNumber,jdbcType=VARCHAR},
             <if test="isActive!= null">
+                IsActive = #{isActive,jdbcType=INTEGER}
+            </if>
+        WHERE Account = #{account,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="updateUserInfo" parameterType="com.example.citymanagement.entity.User">
+        UPDATE userinfo
+        SET 
+            <if test="userType != null">
+                UserType = #{userType,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                Email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="phoneNumber != null">
+                PhoneNumber = #{phoneNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="isActive != null">
                 IsActive = #{isActive,jdbcType=INTEGER}
             </if>
         WHERE Account = #{account,jdbcType=VARCHAR}

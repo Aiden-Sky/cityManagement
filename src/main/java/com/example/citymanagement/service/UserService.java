@@ -44,7 +44,7 @@ public class UserService {
     // 根据账号获取用户信息
     public User getUserByAccount(String account) {
         try {
-            return userMapper.login(account);
+            return userMapper.getUserByAccount(account);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

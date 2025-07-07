@@ -2,6 +2,8 @@ package com.example.citymanagement.service;
 
 import com.example.citymanagement.Dao.AdminMapper;
 import com.example.citymanagement.Dao.UserMapper;
+import com.example.citymanagement.Dto.AdminInfoDTO;
+import com.example.citymanagement.Dto.PasswordChangeDTO;
 import com.example.citymanagement.entity.Admin;
 import com.example.citymanagement.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,103 @@ public class AdminService {
     // 根据ID获取管理员
     public Admin getAdminById(int id) {
         return adminMapper.getAdminById(id);
+    }
+
+    /**
+     * 获取管理员信息DTO，合并Admin和User信息
+     * 
+     * @param account 账户名
+     * @return 管理员信息DTO
+     */
+    public AdminInfoDTO getAdminInfoDTO(String account) {
+        // 获取管理员基本信息
+        Admin admin = adminMapper.getAdminByAccount(account);
+        if (admin == null) {
+            return null;
+        }
+
+        // 获取用户信息
+        User user = userMapper.getUserByAccount(account);
+        if (user == null) {
+            return null;
+        }
+
+        // 合并信息到DTO
+        AdminInfoDTO adminInfoDTO = new AdminInfoDTO();
+        adminInfoDTO.setAccount(admin.getAccount());
+        adminInfoDTO.setName(admin.getName());
+        adminInfoDTO.setSex(admin.isSex());
+        adminInfoDTO.setPosition(admin.getPosition());
+        adminInfoDTO.setRemark(admin.getRemark());
+        // 从User表获取信息
+        adminInfoDTO.setUserType(user.getUserType());
+        adminInfoDTO.setEmail(user.getEmail());
+        adminInfoDTO.setPhoneNumber(user.getPhoneNumber());
+        adminInfoDTO.setIsActive(user.getIsActive());
+
+        return adminInfoDTO;
+    }
+
+    /**
+     * 更新管理员信息
+     * 
+     * @param adminInfoDTO 管理员信息DTO
+     * @return 是否成功
+     */
+    @Transactional
+    public boolean updateAdminInfo(AdminInfoDTO adminInfoDTO) {
+        try {
+            // 更新Admin表
+            Admin admin = new Admin();
+            admin.setAccount(adminInfoDTO.getAccount());
+            admin.setName(adminInfoDTO.getName());
+            admin.setSex(adminInfoDTO.getSex());
+            admin.setPosition(adminInfoDTO.getPosition());
+            admin.setRemark(adminInfoDTO.getRemark());
+
+            // 更新User表
+            User user = new User();
+            user.setaccount(adminInfoDTO.getAccount());
+            user.setUserType(adminInfoDTO.getUserType());
+            user.setEmail(adminInfoDTO.getEmail());
+            user.setPhoneNumber(adminInfoDTO.getPhoneNumber());
+            user.setIsActive(adminInfoDTO.getIsActive());
+
+            // 执行更新
+            int adminUpdateResult = adminMapper.updateAdmin(admin);
+            int userUpdateResult = userMapper.updateUserInfo(user);
+
+            return adminUpdateResult > 0 && userUpdateResult > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 修改密码
+     * 
+     * @param account         账户名
+     * @param currentPassword 当前密码
+     * @param newPassword     新密码
+     * @return 是否成功
+     */
+    @Transactional
+    public boolean changePassword(String account, String currentPassword, String newPassword) {
+        try {
+            // 验证当前密码
+            User user = userMapper.getUserByAccount(account);
+            if (user == null || !user.getPasswordHash().equals(hashPassword(currentPassword))) {
+                return false;
+            }
+
+            // 更新密码
+            user.setPasswordHash(hashPassword(newPassword));
+            return userMapper.updateUser(user) > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // 添加新管理员（同时添加用户和管理员信息）

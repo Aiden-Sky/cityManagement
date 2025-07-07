@@ -6,26 +6,26 @@
     
     <select id="getAdminByAccount" parameterType="String" resultType="com.example.citymanagement.entity.Admin">
         SELECT a.*, u.PasswordHash, u.UserType, u.Email, u.PhoneNumber, u.IsActive
-        FROM admininfo a
+        FROM admininformation a
         JOIN userinfo u ON a.account = u.Account
         WHERE a.account = #{account}
     </select>
     
     <select id="getAllAdmins" resultType="com.example.citymanagement.entity.Admin">
         SELECT a.*, u.PasswordHash, u.UserType, u.Email, u.PhoneNumber, u.IsActive
-        FROM admininfo a
+        FROM admininformation a
         JOIN userinfo u ON a.account = u.Account
     </select>
     
     <select id="getAdminById" parameterType="int" resultType="com.example.citymanagement.entity.Admin">
         SELECT a.*, u.PasswordHash, u.UserType, u.Email, u.PhoneNumber, u.IsActive
-        FROM admininfo a
+        FROM admininformation a
         JOIN userinfo u ON a.account = u.Account
         WHERE a.adminID = #{adminId}
     </select>
     
     <insert id="insertAdmin" parameterType="com.example.citymanagement.entity.Admin">
-        INSERT INTO admininfo (
+        INSERT INTO admininformation (
             account, name, sex, position, remark
         )
         VALUES (
@@ -34,7 +34,7 @@
     </insert>
     
     <update id="updateAdmin" parameterType="com.example.citymanagement.entity.Admin">
-        UPDATE admininfo
+        UPDATE admininformation
         SET 
             name = #{name},
             sex = #{sex},
@@ -44,7 +44,7 @@
     </update>
     
     <delete id="deleteAdmin" parameterType="String">
-        DELETE FROM admininfo
+        DELETE FROM admininformation
         WHERE account = #{account}
     </delete>
 </mapper> 

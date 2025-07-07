@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.citymanagement.Dao.MfaConfigMapper">
+    
+    <!-- 通过账户名获取MFA配置 -->
+    <select id="getMfaConfigByAccount" parameterType="java.lang.String" resultType="com.example.citymanagement.entity.MfaConfig">
+        SELECT *
+        FROM mfa_config
+        WHERE account = #{account}
+    </select>
+    
+    <!-- 添加MFA配置 -->
+    <insert id="insertMfaConfig" parameterType="com.example.citymanagement.entity.MfaConfig">
+        INSERT INTO mfa_config (
+            account, secretKey, enabled, createdTime, updatedTime
+        )
+        VALUES (
+            #{account}, #{secretKey}, #{enabled}, #{createdTime}, #{updatedTime}
+        )
+    </insert>
+    
+    <!-- 更新MFA配置 -->
+    <update id="updateMfaConfig" parameterType="com.example.citymanagement.entity.MfaConfig">
+        UPDATE mfa_config
+        SET secretKey = #{secretKey},
+            enabled = #{enabled},
+            updatedTime = #{updatedTime}
+        WHERE account = #{account}
+    </update>
+    
+    <!-- 删除MFA配置 -->
+    <delete id="deleteMfaConfig" parameterType="java.lang.String">
+        DELETE FROM mfa_config
+        WHERE account = #{account}
+    </delete>
+</mapper> 
