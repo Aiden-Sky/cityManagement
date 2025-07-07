@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
  */
 public class CaseReportDTO {
     private int caseID;
+    private String reporterID;
     private String photoUrl;
     private String caseType;
     private String description;
@@ -212,5 +213,13 @@ public class CaseReportDTO {
 
     public void setManagerID(int managerID) {
         this.managerID = managerID;
+    }
+
+    public String getReporterID() {
+        return reporterID;
+    }
+
+    public void setReporterID(String reporterID) {
+        this.reporterID = reporterID;
     }
 }

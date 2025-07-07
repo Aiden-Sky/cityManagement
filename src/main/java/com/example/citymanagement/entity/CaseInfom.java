@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class CaseInfom {
 
     private int caseID;
+    private int reporterID;
     private byte[] photo;
     private String caseType;
     private String description;
@@ -157,5 +158,13 @@ public class CaseInfom {
 
     public void setManagerID(int manager) {
         this.managerID = manager;
+    }
+
+    public int getReporterID() {
+        return reporterID;
+    }
+
+    public void setReporterID(int reporterID) {
+        this.reporterID = reporterID;
     }
 }

@@ -8,11 +8,11 @@
         INSERT INTO caseinformation (caseID, photo, caseType, description, location, locationDescribe,
                                 status, createdDate, closedDate, reporter, reporterPhone,
                                 needResponse, infoCategory, handlingMethod, isVerified, severity,
-                                managerID)
+                                managerID,reporterID)
         VALUES (#{caseID}, #{photo}, #{caseType}, #{description}, #{location}, #{locationDescribe},
                 #{status}, #{createdDate}, #{closedDate}, #{reporter}, #{reporterPhone},
                 #{needResponse}, #{infoCategory}, #{handlingMethod}, #{isVerified}, #{severity},
-                #{managerID})
+                #{managerID},#{reporterID})
     </insert>
 
     <select id="getReports" parameterType="map" resultType="com.example.citymanagement.entity.CaseInfom">

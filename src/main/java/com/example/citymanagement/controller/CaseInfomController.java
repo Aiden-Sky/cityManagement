@@ -4,6 +4,7 @@ import com.example.citymanagement.Dto.CaseReportDTO;
 import com.example.citymanagement.Dto.ReportResponse;
 import com.example.citymanagement.entity.CaseInfom;
 import com.example.citymanagement.service.CaseInfomService;
+import com.example.citymanagement.service.UserInfomService;
 import com.example.citymanagement.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,8 @@ public class CaseInfomController {
     private JwtUtil jwtUtil;
     @Autowired
     private View error;
+    @Autowired
+    private UserInfomService userInfomService;
 
     @GetMapping("/getInfoms")
     @ResponseBody
@@ -97,8 +100,17 @@ public class CaseInfomController {
         // 获取居民信息
         String username = jwtUtil.getUsernameFromToken(token);
 
+        // 获取居民ID
+        Long residentId = userInfomService.findResidentIdByAccount(username);
+        if (residentId == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("未找到居民信息");
+        }
+
         // 将DTO转换为实体
         CaseInfom caseInfom = caseReportDTO.toCaseInfom();
+
+        // 设置居民ID
+        caseInfom.setReporterID(residentId.intValue());
 
         // 设置案件初始状态
         caseInfom.setStatus("待处理");
