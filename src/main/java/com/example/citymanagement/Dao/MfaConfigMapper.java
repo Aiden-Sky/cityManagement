@@ -1,25 +1,24 @@
 package com.example.citymanagement.Dao;
 
 import com.example.citymanagement.entity.MfaConfig;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-/**
- * MFA配置Mapper接口
- */
+@Mapper
 public interface MfaConfigMapper {
-
     /**
-     * 通过账户名获取MFA配置
+     * 根据账号获取MFA配置
      * 
-     * @param account 账户名
+     * @param account 账号
      * @return MFA配置
      */
     MfaConfig getMfaConfigByAccount(String account);
 
     /**
-     * 添加MFA配置
+     * 创建MFA配置
      * 
      * @param mfaConfig MFA配置
-     * @return 影响行数
+     * @return 影响的行数
      */
     int insertMfaConfig(MfaConfig mfaConfig);
 
@@ -27,15 +26,24 @@ public interface MfaConfigMapper {
      * 更新MFA配置
      * 
      * @param mfaConfig MFA配置
-     * @return 影响行数
+     * @return 影响的行数
      */
     int updateMfaConfig(MfaConfig mfaConfig);
 
     /**
+     * 更新MFA状态
+     * 
+     * @param account 账号
+     * @param enabled 是否启用
+     * @return 影响的行数
+     */
+    int updateMfaStatus(@Param("account") String account, @Param("enabled") boolean enabled);
+
+    /**
      * 删除MFA配置
      * 
-     * @param account 账户名
-     * @return 影响行数
+     * @param account 账号
+     * @return 影响的行数
      */
     int deleteMfaConfig(String account);
 }

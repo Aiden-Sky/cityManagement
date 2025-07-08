@@ -2,11 +2,15 @@ package com.example.citymanagement.controller;
 
 import com.example.citymanagement.Dto.AdminInfoDTO;
 import com.example.citymanagement.Dto.LoginHistoryDTO;
+import com.example.citymanagement.Dto.MfaSetupDTO;
+import com.example.citymanagement.Dto.MfaStatusDTO;
+import com.example.citymanagement.Dto.MfaVerifyDTO;
 import com.example.citymanagement.Dto.PasswordChangeDTO;
 import com.example.citymanagement.entity.Admin;
 import com.example.citymanagement.entity.User;
 import com.example.citymanagement.service.AdminService;
 import com.example.citymanagement.service.LoginHistoryService;
+import com.example.citymanagement.service.MfaService;
 import com.example.citymanagement.service.UserService;
 import com.example.citymanagement.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,9 @@ public class AdminController {
 
     @Autowired
     private LoginHistoryService loginHistoryService;
+
+    @Autowired
+    private MfaService mfaService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -283,12 +290,13 @@ public class AdminController {
     private void recordLogin(String account, String status) {
         try {
             // 获取当前请求的HttpServletRequest
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder
+                    .getRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
-            
+
             // 获取客户端IP
             String ip = getClientIP(request);
-            
+
             // 获取设备信息
             String userAgent = request.getHeader("User-Agent");
             String device = userAgent != null ? userAgent : "未知设备";
@@ -300,13 +308,13 @@ public class AdminController {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * 获取客户端真实IP地址
      */
     private String getClientIP(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
-        
+
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
@@ -322,7 +330,7 @@ public class AdminController {
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        
+
         // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
         if (ip != null && ip.length() > 15) {
             if (ip.indexOf(",") > 0) {
@@ -330,6 +338,130 @@ public class AdminController {
             }
         }
         return ip;
+    }
+
+    /**
+     * 获取MFA状态
+     * 
+     * @param token 认证令牌
+     * @return MFA状态
+     */
+    @GetMapping("/mfa/status")
+    @ResponseBody
+    public ResponseEntity<MfaStatusDTO> getMfaStatus(@RequestHeader("Authorization") String token) {
+        // 验证管理员权限
+        if (!validateAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // 获取账号
+        String account = jwtUtil.getUsernameFromToken(token);
+
+        // 获取MFA状态
+        MfaStatusDTO mfaStatusDTO = mfaService.getMfaStatus(account);
+
+        return ResponseEntity.ok(mfaStatusDTO);
+    }
+
+    /**
+     * 设置MFA
+     * 
+     * @param token 认证令牌
+     * @return MFA设置信息
+     */
+    @PostMapping("/mfa/setup")
+    @ResponseBody
+    public ResponseEntity<MfaSetupDTO> setupMfa(@RequestHeader("Authorization") String token) {
+        // 验证管理员权限
+        if (!validateAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // 获取账号
+        String account = jwtUtil.getUsernameFromToken(token);
+
+        // 设置MFA
+        MfaSetupDTO mfaSetupDTO = mfaService.setupMfa(account);
+
+        return ResponseEntity.ok(mfaSetupDTO);
+    }
+
+    /**
+     * 验证MFA并启用
+     * 
+     * @param mfaVerifyDTO 验证信息
+     * @param token        认证令牌
+     * @return 验证结果
+     */
+    @PostMapping("/mfa/verify")
+    @ResponseBody
+    public ResponseEntity<String> verifyMfa(@RequestBody MfaVerifyDTO mfaVerifyDTO,
+            @RequestHeader("Authorization") String token) {
+        // 验证管理员权限
+        if (!validateAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
+        }
+
+        // 获取账号
+        String account = jwtUtil.getUsernameFromToken(token);
+
+        // 验证并启用MFA
+        boolean verified = mfaService.verifyAndEnableMfa(account, mfaVerifyDTO.getCode());
+
+        if (verified) {
+            return ResponseEntity.ok("验证成功，MFA已启用");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("验证码无效或已过期");
+        }
+    }
+
+    /**
+     * 禁用MFA
+     * 
+     * @param token 认证令牌
+     * @return 操作结果
+     */
+    @PostMapping("/mfa/disable")
+    @ResponseBody
+    public ResponseEntity<String> disableMfa(@RequestHeader("Authorization") String token) {
+        // 验证管理员权限
+        if (!validateAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
+        }
+
+        // 获取账号
+        String account = jwtUtil.getUsernameFromToken(token);
+
+        // 禁用MFA
+        boolean disabled = mfaService.disableMfa(account);
+
+        if (disabled) {
+            return ResponseEntity.ok("MFA已禁用");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("禁用MFA失败");
+        }
+    }
+
+    /**
+     * MFA登录验证
+     * 
+     * @param account 账号
+     * @param code    验证码
+     * @return 验证结果
+     */
+    @PostMapping("/mfa/login-verify")
+    @ResponseBody
+    public ResponseEntity<String> verifyMfaLogin(
+            @RequestParam String account,
+            @RequestParam String code) {
+        // 验证MFA登录验证码
+        boolean verified = mfaService.verifyMfaCode(account, code);
+
+        if (verified) {
+            return ResponseEntity.ok("验证成功");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("验证码无效或已过期");
+        }
     }
 
     // 辅助方法：验证是否是管理员token

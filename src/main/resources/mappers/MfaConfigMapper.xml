@@ -1,38 +1,58 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.citymanagement.Dao.MfaConfigMapper">
-    
-    <!-- 通过账户名获取MFA配置 -->
-    <select id="getMfaConfigByAccount" parameterType="java.lang.String" resultType="com.example.citymanagement.entity.MfaConfig">
-        SELECT *
-        FROM mfa_config
-        WHERE account = #{account}
-    </select>
-    
-    <!-- 添加MFA配置 -->
-    <insert id="insertMfaConfig" parameterType="com.example.citymanagement.entity.MfaConfig">
-        INSERT INTO mfa_config (
-            account, secretKey, enabled, createdTime, updatedTime
-        )
-        VALUES (
-            #{account}, #{secretKey}, #{enabled}, #{createdTime}, #{updatedTime}
-        )
-    </insert>
-    
-    <!-- 更新MFA配置 -->
-    <update id="updateMfaConfig" parameterType="com.example.citymanagement.entity.MfaConfig">
-        UPDATE mfa_config
-        SET secretKey = #{secretKey},
-            enabled = #{enabled},
-            updatedTime = #{updatedTime}
-        WHERE account = #{account}
-    </update>
-    
-    <!-- 删除MFA配置 -->
-    <delete id="deleteMfaConfig" parameterType="java.lang.String">
-        DELETE FROM mfa_config
-        WHERE account = #{account}
-    </delete>
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.example.citymanagement.entity.MfaConfig">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="secret_key" jdbcType="VARCHAR" property="secretKey" />
+    <result column="enabled" jdbcType="BIT" property="enabled" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+  </resultMap>
+  
+  <!-- 基础列 -->
+  <sql id="Base_Column_List">
+    id, account, secret_key, enabled, created_time, updated_time
+  </sql>
+  
+  <!-- 根据账号查询MFA配置 -->
+  <select id="getMfaConfigByAccount" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM mfa_config
+    WHERE account = #{account,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 插入MFA配置 -->
+  <insert id="insertMfaConfig" parameterType="com.example.citymanagement.entity.MfaConfig">
+    INSERT INTO mfa_config (account, secret_key, enabled, created_time, updated_time)
+    VALUES (#{account,jdbcType=VARCHAR}, #{secretKey,jdbcType=VARCHAR}, 
+           #{enabled,jdbcType=BIT}, NOW(), NOW())
+  </insert>
+  
+  <!-- 更新MFA配置 -->
+  <update id="updateMfaConfig" parameterType="com.example.citymanagement.entity.MfaConfig">
+    UPDATE mfa_config
+    SET 
+      secret_key = #{secretKey,jdbcType=VARCHAR},
+      enabled = #{enabled,jdbcType=BIT},
+      updated_time = NOW()
+    WHERE account = #{account,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 更新MFA状态 -->
+  <update id="updateMfaStatus">
+    UPDATE mfa_config
+    SET 
+      enabled = #{enabled,jdbcType=BIT},
+      updated_time = NOW()
+    WHERE account = #{account,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 删除MFA配置 -->
+  <delete id="deleteMfaConfig" parameterType="java.lang.String">
+    DELETE FROM mfa_config
+    WHERE account = #{account,jdbcType=VARCHAR}
+  </delete>
 </mapper> 

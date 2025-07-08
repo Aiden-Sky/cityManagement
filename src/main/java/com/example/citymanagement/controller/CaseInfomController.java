@@ -37,7 +37,7 @@ public class CaseInfomController {
             @RequestHeader("Authorization") String token) {
 
         // 验证token是否有SystemAdmin权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+        if (!jwtUtil.validateToken(token, "SystemAdmin")&&!jwtUtil.validateToken(token, "Management")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
