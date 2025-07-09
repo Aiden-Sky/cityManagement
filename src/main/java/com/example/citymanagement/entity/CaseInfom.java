@@ -14,14 +14,15 @@ public class CaseInfom {
     private String status;
     private LocalDateTime createdDate;
     private LocalDateTime closedDate;
+    private LocalDateTime processDate;
     private String reporter;
     private String reporterPhone;
     private boolean needResponse;
     private String infoCategory;
     private String handlingMethod;
     private boolean isVerified;
-    private String severity;
-    private int managerID;
+    private String manageRemark;
+    private String managerName;
 
     // Getters and Setters
     public int getCaseID() {
@@ -144,27 +145,35 @@ public class CaseInfom {
         this.isVerified = isVerified;
     }
 
-    public String getSeverity() {
-        return severity;
-    }
-
-    public void setSeverity(String severity) {
-        this.severity = severity;
-    }
-
-    public int getManagerID() {
-        return managerID;
-    }
-
-    public void setManagerID(int manager) {
-        this.managerID = manager;
-    }
-
     public int getReporterID() {
         return reporterID;
     }
 
     public void setReporterID(int reporterID) {
         this.reporterID = reporterID;
+    }
+
+    public String getManageRemark() {
+        return manageRemark;
+    }
+
+    public void setManageRemark(String manageRemark) {
+        this.manageRemark = manageRemark;
+    }
+
+    public String getManagerName() {
+        return managerName;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
+    }
+
+    public LocalDateTime getProcessDate() {
+        return processDate;
+    }
+
+    public void setProcessDate(LocalDateTime processDate) {
+        this.processDate = processDate;
     }
 }

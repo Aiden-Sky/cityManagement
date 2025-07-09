@@ -36,8 +36,8 @@ public class CaseInfomController {
             @RequestParam int pageSize,
             @RequestHeader("Authorization") String token) {
 
-        // 验证token是否有SystemAdmin权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin")&&!jwtUtil.validateToken(token, "Management")) {
+        // 验证token是否有SysAdmin权限
+        if (!jwtUtil.validateToken(token, "SysAdmin")&&!jwtUtil.validateToken(token, "Management")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
@@ -59,7 +59,7 @@ public class CaseInfomController {
     public ResponseEntity<String> setReports(@RequestBody CaseInfom reportData,
             @RequestHeader("Authorization") String token) {
         // 验证token是否有管理权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin") && !jwtUtil.validateToken(token, "Management")) {
+        if (!jwtUtil.validateToken(token, "SysAdmin") && !jwtUtil.validateToken(token, "Management")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
         }
 
@@ -76,7 +76,7 @@ public class CaseInfomController {
     public ResponseEntity<String> deletInfom(@RequestParam("caseId") int caseId,
             @RequestHeader("Authorization") String token) {
         // 验证token是否有管理权限
-        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+        if (!jwtUtil.validateToken(token, "SysAdmin")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
         }
 

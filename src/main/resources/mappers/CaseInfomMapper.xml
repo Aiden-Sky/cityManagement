@@ -6,13 +6,13 @@
 
     <insert id="insertCaseInfom" parameterType="com.example.citymanagement.entity.CaseInfom">
         INSERT INTO caseinformation (caseID, photo, caseType, description, location, locationDescribe,
-                                status, createdDate, closedDate, reporter, reporterPhone,
-                                needResponse, infoCategory, handlingMethod, isVerified, severity,
-                                managerID,reporterID)
+                                status, createdDate, processDate, closedDate, reporter, reporterPhone,
+                                needResponse, infoCategory, handlingMethod, isVerified,
+                                manageRemark, managerName, reporterID)
         VALUES (#{caseID}, #{photo}, #{caseType}, #{description}, #{location}, #{locationDescribe},
-                #{status}, #{createdDate}, #{closedDate}, #{reporter}, #{reporterPhone},
-                #{needResponse}, #{infoCategory}, #{handlingMethod}, #{isVerified}, #{severity},
-                #{managerID},#{reporterID})
+                #{status}, #{createdDate}, #{processDate}, #{closedDate}, #{reporter}, #{reporterPhone},
+                #{needResponse}, #{infoCategory}, #{handlingMethod}, #{isVerified},
+                #{manageRemark}, #{managerName}, #{reporterID})
     </insert>
 
     <select id="getReports" parameterType="map" resultType="com.example.citymanagement.entity.CaseInfom">
@@ -55,14 +55,15 @@
             location = #{location},
             locationDescribe = #{locationDescribe},
             status = #{status},
+            processDate = #{processDate},
             closedDate = #{closedDate},
             reporterPhone = #{reporterPhone},
             needResponse = #{needResponse},
             infoCategory = #{infoCategory},
             handlingMethod = #{handlingMethod},
             isVerified = #{isVerified},
-            severity = #{severity},
-            managerID = #{managerID}
+            manageRemark = #{manageRemark},
+            managerName = #{managerName}
         WHERE caseID = #{caseID}
     </update>
 </mapper>

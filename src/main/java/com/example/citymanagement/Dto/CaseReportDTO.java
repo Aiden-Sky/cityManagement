@@ -24,8 +24,7 @@ public class CaseReportDTO {
     private String infoCategory;
     private String handlingMethod;
     private boolean verified;
-    private String severity;
-    private int managerID;
+
 
     /**
      * 将DTO转换为实体类
@@ -72,8 +71,7 @@ public class CaseReportDTO {
         caseInfom.setInfoCategory(this.infoCategory);
         caseInfom.setHandlingMethod(this.handlingMethod);
         caseInfom.setVerified(this.verified);
-        caseInfom.setSeverity(this.severity);
-        caseInfom.setManagerID(this.managerID);
+
 
         return caseInfom;
     }
@@ -199,21 +197,6 @@ public class CaseReportDTO {
         this.verified = verified;
     }
 
-    public String getSeverity() {
-        return severity;
-    }
-
-    public void setSeverity(String severity) {
-        this.severity = severity;
-    }
-
-    public int getManagerID() {
-        return managerID;
-    }
-
-    public void setManagerID(int managerID) {
-        this.managerID = managerID;
-    }
 
     public String getReporterID() {
         return reporterID;
