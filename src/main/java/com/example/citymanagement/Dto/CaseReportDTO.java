@@ -25,7 +25,6 @@ public class CaseReportDTO {
     private String handlingMethod;
     private boolean verified;
 
-
     /**
      * 将DTO转换为实体类
      * 
@@ -34,10 +33,18 @@ public class CaseReportDTO {
     public CaseInfom toCaseInfom() {
         CaseInfom caseInfom = new CaseInfom();
         caseInfom.setCaseID(this.caseID);
-        // 处理photoUrl，实际项目中可能需要下载图片并转换为字节数组
-        // 这里简单处理，将URL存为字符串
+        // 处理photoUrl，处理Base64格式的图片数据
         if (this.photoUrl != null && !this.photoUrl.isEmpty()) {
-            caseInfom.setPhoto(this.photoUrl.getBytes());
+            // 检查是否是data:image开头的Base64编码
+            if (this.photoUrl.startsWith("data:image")) {
+                // 提取Base64部分
+                String base64Image = this.photoUrl.split(",")[1];
+                // 存储原始字节数组
+                caseInfom.setPhoto(java.util.Base64.getDecoder().decode(base64Image));
+            } else {
+                // 如果不是Base64格式，直接存储字符串
+                caseInfom.setPhoto(this.photoUrl.getBytes());
+            }
         }
         caseInfom.setCaseType(this.caseType);
         caseInfom.setDescription(this.description);
@@ -71,7 +78,6 @@ public class CaseReportDTO {
         caseInfom.setInfoCategory(this.infoCategory);
         caseInfom.setHandlingMethod(this.handlingMethod);
         caseInfom.setVerified(this.verified);
-
 
         return caseInfom;
     }
@@ -196,7 +202,6 @@ public class CaseReportDTO {
     public void setVerified(boolean verified) {
         this.verified = verified;
     }
-
 
     public String getReporterID() {
         return reporterID;

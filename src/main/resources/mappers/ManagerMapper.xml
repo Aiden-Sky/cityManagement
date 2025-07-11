@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.citymanagement.Dao.ManagerMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="ManagerResultMap" type="com.example.citymanagement.entity.Manager">
+        <id property="ManageID" column="ManageID"/>
+        <result property="Account" column="Account"/>
+        <result property="Name" column="Name"/>
+        <result property="Sex" column="Sex"/>
+        <result property="Email" column="Email"/>
+        <result property="PhoneNumber" column="PhoneNumber"/>
+        <result property="Address" column="Address"/>
+        <result property="IDNumber" column="IDNumber"/>
+        <result property="Department" column="Department"/>
+        <result property="Position" column="Position"/>
+        <result property="IsActive" column="IsActive"/>
+    </resultMap>
+
+    <!-- 查询所有城市管理者 -->
+    <select id="getAllManagers" resultMap="ManagerResultMap">
+        SELECT * FROM Manager
+    </select>
+
+    <!-- 通过ID查询城市管理者 -->
+    <select id="getManagerById" resultMap="ManagerResultMap" parameterType="int">
+        SELECT * FROM Manager WHERE ManageID = #{manageId}
+    </select>
+
+    <!-- 通过账号查询城市管理者 -->
+    <select id="getManagerByAccount" resultMap="ManagerResultMap" parameterType="string">
+        SELECT * FROM Manager WHERE Account = #{account}
+    </select>
+
+    <!-- 插入城市管理者 -->
+    <insert id="insertManager" parameterType="com.example.citymanagement.entity.Manager" useGeneratedKeys="true" keyProperty="ManageID">
+        INSERT INTO Manager (Account, Name, Sex, Email, PhoneNumber, Address, IDNumber, Department, Position, IsActive)
+        VALUES (#{Account}, #{Name}, #{Sex}, #{Email}, #{PhoneNumber}, #{Address}, #{IDNumber}, #{Department}, #{Position}, #{IsActive})
+    </insert>
+
+    <!-- 更新城市管理者 -->
+    <update id="updateManager" parameterType="com.example.citymanagement.entity.Manager">
+        UPDATE Manager
+        SET Name = #{Name},
+            Sex = #{Sex},
+            Email = #{Email},
+            PhoneNumber = #{PhoneNumber},
+            Address = #{Address},
+            IDNumber = #{IDNumber},
+            Department = #{Department},
+            Position = #{Position},
+            IsActive = #{IsActive}
+        WHERE ManageID = #{ManageID}
+    </update>
+
+    <!-- 删除城市管理者 -->
+    <delete id="deleteManager" parameterType="int">
+        DELETE FROM Manager WHERE ManageID = #{manageId}
+    </delete>
+
+    <!-- 根据部门查询城市管理者列表 -->
+    <select id="getManagersByDepartment" resultMap="ManagerResultMap" parameterType="string">
+        SELECT * FROM Manager WHERE Department = #{department}
+    </select>
+</mapper> 

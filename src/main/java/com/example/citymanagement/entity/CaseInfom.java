@@ -176,4 +176,6 @@ public class CaseInfom {
     public void setProcessDate(LocalDateTime processDate) {
         this.processDate = processDate;
     }
+
+
 }

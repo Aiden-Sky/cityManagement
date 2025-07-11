@@ -11,14 +11,14 @@
     <!-- 通过账户名查找居民ID -->
     <select id="findResidentIdByAccount" parameterType="java.lang.String" resultType="java.lang.Long">
         SELECT residentId
-        FROM resident
+        FROM residentinfo
         WHERE account = #{account}
     </select>
     
     <!-- 通过账户名查找居民信息 -->
     <select id="findResidentByAccount" parameterType="java.lang.String" resultType="com.example.citymanagement.entity.Resident">
         SELECT *
-        FROM resident
+        FROM residentinfo
         WHERE account = #{account}
     </select>
 </mapper>

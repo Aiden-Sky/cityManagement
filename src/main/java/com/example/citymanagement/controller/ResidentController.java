@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Controller
 @CrossOrigin(origins = "*")
-@RequestMapping("/resident")
+@RequestMapping("/city/resident")
 public class ResidentController {
 
     @Autowired
@@ -47,9 +47,9 @@ public class ResidentController {
     public ResponseEntity<Resident> getResidentInfo(@RequestHeader("Authorization") String token) {
         try {
             // 验证居民权限
-//            if (!jwtUtil.validateToken(token, "Resident")) {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-//            }
+            // if (!jwtUtil.validateToken(token, "Resident")) {
+            // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            // }
 
             // 从token中获取用户名
             String username = jwtUtil.getUsernameFromToken(token);
@@ -89,26 +89,28 @@ public class ResidentController {
     }
 
     // 管理员添加新居民
-//    @PostMapping("/add")
-//    @ResponseBody
-//    public ResponseEntity<String> addResident(@RequestBody Resident resident,
-//            @RequestHeader("Authorization") String token) {
-//        // 验证管理员权限
-//        if (!jwtUtil.validateToken(token, "SystemAdmin")) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
-//        }
-//
-//        try {
-//            if (residentService.registResident(resident)) {
-//                return ResponseEntity.ok("居民添加成功");
-//            } else {
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("居民添加失败");
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("居民添加失败：" + e.getMessage());
-//        }
-//    }
+    // @PostMapping("/add")
+    // @ResponseBody
+    // public ResponseEntity<String> addResident(@RequestBody Resident resident,
+    // @RequestHeader("Authorization") String token) {
+    // // 验证管理员权限
+    // if (!jwtUtil.validateToken(token, "SystemAdmin")) {
+    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("无权限执行此操作");
+    // }
+    //
+    // try {
+    // if (residentService.registResident(resident)) {
+    // return ResponseEntity.ok("居民添加成功");
+    // } else {
+    // return
+    // ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("居民添加失败");
+    // }
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("居民添加失败："
+    // + e.getMessage());
+    // }
+    // }
 
     // 更新居民信息
     @PutMapping("/update")

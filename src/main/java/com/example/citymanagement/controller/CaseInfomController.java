@@ -7,13 +7,16 @@ import com.example.citymanagement.service.CaseInfomService;
 import com.example.citymanagement.service.UserInfomService;
 import com.example.citymanagement.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.View;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -37,13 +40,15 @@ public class CaseInfomController {
             @RequestHeader("Authorization") String token) {
 
         // 验证token是否有SysAdmin权限
-        if (!jwtUtil.validateToken(token, "SysAdmin")&&!jwtUtil.validateToken(token, "Management")) {
+        if (!jwtUtil.validateToken(token, "SysAdmin") && !jwtUtil.validateToken(token, "Management")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
         // 获取案例信息
         List<CaseInfom> caseInfomList = caseInfomService.getReports(page, pageSize);
         int totalPages = caseInfomService.getTotalPages(pageSize);
+
+        // 不在这里处理图片数据，改为单独请求
 
         // 创建响应对象
         ReportResponse response = new ReportResponse();
@@ -145,6 +150,8 @@ public class CaseInfomController {
         // 获取该居民上报的案件
         List<CaseInfom> myCases = caseInfomService.getReportsByUsername(username, page, pageSize);
 
+        // 不在这里处理图片数据，改为单独请求
+
         return ResponseEntity.ok(myCases);
     }
 
@@ -172,6 +179,43 @@ public class CaseInfomController {
             }
         }
 
+        // 不在这里处理图片数据，改为单独请求
+
         return ResponseEntity.ok(caseDetail);
+    }
+
+    // 获取案件图片
+    @GetMapping("/getCaseImage")
+    @ResponseBody
+    public ResponseEntity<byte[]> getCaseImage(
+            @RequestParam int caseId,
+            @RequestHeader("Authorization") String token) {
+
+        // 验证token
+        String userType = jwtUtil.getUserTypeFromToken(token);
+        if (userType == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // 获取案件详情
+        CaseInfom caseDetail = caseInfomService.getCaseById(caseId);
+
+        // 如果是居民，需要验证是否是自己上报的案件
+        if ("Resident".equals(userType)) {
+            String username = jwtUtil.getUsernameFromToken(token);
+            if (!username.equals(caseDetail.getReporter())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            }
+        }
+
+        // 返回图片数据
+        if (caseDetail != null && caseDetail.getPhoto() != null && caseDetail.getPhoto().length > 0) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG); // 假设图片是JPEG格式
+
+            return new ResponseEntity<>(caseDetail.getPhoto(), headers, HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
