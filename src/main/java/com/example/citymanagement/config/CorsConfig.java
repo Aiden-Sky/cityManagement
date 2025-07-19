@@ -17,7 +17,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // 允许特定的跨域来源，而不是使用通配符
-        config.setAllowedOrigins(Arrays.asList("http://localhost", "http://localhost:8080", "http://localhost:3000"));
+        config.setAllowedOriginPatterns(Arrays.asList("*"));
 
         // 允许跨域的HTTP方法
         config.addAllowedMethod("*");

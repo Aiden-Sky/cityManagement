@@ -28,7 +28,7 @@ import java.util.Map;
 
 @Controller
 @CrossOrigin(origins = "*")
-@RequestMapping("/city/admin")
+@RequestMapping("/admin")
 public class AdminController {
 
     @Autowired
